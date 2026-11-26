@@ -1,0 +1,13 @@
+# CloudFormation Guard rules (v3 syntax).
+# Enforces baseline security posture for S3 buckets used by the platform.
+
+rule s3_public_access_blocked when AWS::S3::Bucket {
+  %Properties.PublicAccessBlockConfiguration.BlockPublicAcls == true
+  %Properties.PublicAccessBlockConfiguration.BlockPublicPolicy == true
+  %Properties.PublicAccessBlockConfiguration.IgnorePublicAcls == true
+  %Properties.PublicAccessBlockConfiguration.RestrictPublicBuckets == true
+}
+
+rule s3_encryption_enabled when AWS::S3::Bucket {
+  %Properties.BucketEncryption.ServerSideEncryptionConfiguration[*].ServerSideEncryptionByDefault.SSEAlgorithm == "AES256"
+}
