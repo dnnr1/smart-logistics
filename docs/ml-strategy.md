@@ -9,11 +9,11 @@ scorer implementation.
 
 The heuristic combines bounded, documented factors:
 
-| Factor | Points |
-| --- | --- |
-| Distance (>300 / >800 / >1500 km) | 6 / 12 / 20 |
-| Estimated transit (>24 / >48 / >72 h) | 8 / 14 / 20 |
-| Carrier historical delay rate | `rate * 30` |
+| Factor                                                       | Points          |
+| ------------------------------------------------------------ | --------------- |
+| Distance (>300 / >800 / >1500 km)                            | 6 / 12 / 20     |
+| Estimated transit (>24 / >48 / >72 h)                        | 8 / 14 / 20     |
+| Carrier historical delay rate                                | `rate * 30`     |
 | Current status (delayed/pending/out_for_delivery/in_transit) | 30 / 10 / 8 / 4 |
 
 The total is clamped to `[0,100]` and mapped to `low` (<33), `medium` (33–65), `high` (≥66),

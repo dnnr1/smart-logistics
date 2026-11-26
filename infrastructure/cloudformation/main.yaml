@@ -1,34 +1,133 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >-
-  Smart Logistics - Phase 3 placeholder template. Expanded in Phase 8 into the full
-  serverless stack (DynamoDB, S3, Lambda, API Gateway, IAM, CloudFront, CloudWatch).
+  Smart Logistics - full serverless stack: DynamoDB, S3 (historical + web), Lambda,
+  API Gateway HTTP API, IAM, CloudWatch, CloudFront + OAC. No SageMaker resources are
+  created. Lambda code must be packaged and uploaded to S3 (see docs/infrastructure.md).
 
 Parameters:
   EnvironmentName:
     Type: String
     Default: dev
     AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name.
   ApplicationName:
     Type: String
     Default: smart-logistics
+    Description: Application name used to prefix resource names.
+  DynamoDBBillingMode:
+    Type: String
+    Default: PAY_PER_REQUEST
+    AllowedValues: [PAY_PER_REQUEST, PROVISIONED]
+    Description: DynamoDB billing mode.
+  ReadCapacityUnits:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    Description: Read capacity (only used when billing mode is PROVISIONED).
+  WriteCapacityUnits:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    Description: Write capacity (only used when billing mode is PROVISIONED).
+  CloudWatchRetentionInDays:
+    Type: Number
+    Default: 14
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 180, 365]
+    Description: Log retention period in days.
+  BedrockModelId:
+    Type: String
+    Default: ""
+    Description: Bedrock model identifier. Leave empty to disable the assistant (503).
+  BedrockRegion:
+    Type: String
+    Default: ""
+    Description: Region hosting the Bedrock model (defaults to the stack region when empty).
+  SageMakerEndpointName:
+    Type: String
+    Default: ""
+    Description: Optional SageMaker endpoint for the future risk scorer (not created here).
+  LambdaCodeBucket:
+    Type: String
+    Description: S3 bucket containing the packaged Lambda code (api.zip).
+  LambdaCodeKey:
+    Type: String
+    Default: smart-logistics/api.zip
+    Description: S3 key of the packaged Lambda code.
+
+Conditions:
+  IsProvisioned: !Equals [!Ref DynamoDBBillingMode, PROVISIONED]
+  BedrockEnabled: !Not [!Equals [!Ref BedrockModelId, ""]]
 
 Resources:
   DeliveriesTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${ApplicationName}-${EnvironmentName}-deliveries"
+      BillingMode: !If [IsProvisioned, PROVISIONED, PAY_PER_REQUEST]
+      ProvisionedThroughput: !If
+        - IsProvisioned
+        - ReadCapacityUnits: !Ref ReadCapacityUnits
+          WriteCapacityUnits: !Ref WriteCapacityUnits
+        - !Ref AWS::NoValue
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
         - AttributeName: SK
+          AttributeType: S
+        - AttributeName: gsi1Pk
+          AttributeType: S
+        - AttributeName: gsi1Sk
+          AttributeType: S
+        - AttributeName: gsi2Pk
+          AttributeType: S
+        - AttributeName: gsi2Sk
+          AttributeType: S
+        - AttributeName: gsi3Pk
+          AttributeType: S
+        - AttributeName: gsi3Sk
+          AttributeType: S
+        - AttributeName: trackingCode
           AttributeType: S
       KeySchema:
         - AttributeName: PK
           KeyType: HASH
         - AttributeName: SK
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: gsi1Pk
+              KeyType: HASH
+            - AttributeName: gsi1Sk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: gsi2Pk
+              KeyType: HASH
+            - AttributeName: gsi2Sk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI3
+          KeySchema:
+            - AttributeName: gsi3Pk
+              KeyType: HASH
+            - AttributeName: gsi3Sk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI4
+          KeySchema:
+            - AttributeName: trackingCode
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       SSESpecification:
         SSEEnabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
 
   HistoricalDataBucket:
     Type: AWS::S3::Bucket
@@ -60,16 +159,206 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
 
-  ApiLogGroup:
+  FrontendOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${ApplicationName}-${EnvironmentName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudFrontOAC
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        HttpVersion: http2
+        Origins:
+          - Id: frontend-s3
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            OriginAccessControlId: !Ref FrontendOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          TargetOriginId: frontend-s3
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e639e58e6cd
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+
+  RouterLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${ApplicationName}-${EnvironmentName}"
-      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/${ApplicationName}-${EnvironmentName}-router"
+      RetentionInDays: !Ref CloudWatchRetentionInDays
+
+  RouterRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: router-permissions
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource:
+                  - !GetAtt DeliveriesTable.Arn
+                  - !Sub "${DeliveriesTable.Arn}/index/*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt RouterLogGroup.Arn
+              - !If
+                - BedrockEnabled
+                - Effect: Allow
+                  Action: bedrock:InvokeModel
+                  Resource: !Sub "arn:${AWS::Partition}:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}"
+                - !Ref AWS::NoValue
+
+  RouterFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${ApplicationName}-${EnvironmentName}-router"
+      Runtime: nodejs24.x
+      Handler: index.handler
+      Role: !GetAtt RouterRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: !Ref LambdaCodeKey
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref DeliveriesTable
+          AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+          RISK_SCORER: heuristic
+          SAGEMAKER_ENDPOINT_NAME: !Ref SageMakerEndpointName
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          BEDROCK_REGION: !If [BedrockEnabled, !Ref BedrockRegion, !Ref AWS::Region]
+
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub "${ApplicationName}-${EnvironmentName}"
+      ProtocolType: HTTP
+
+  RouterIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      IntegrationUri: !GetAtt RouterFunction.Arn
+      PayloadFormatVersion: "2.0"
+
+  ApiInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref RouterFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+
+  ListDeliveriesRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: GET /deliveries
+      Target: !Sub "integrations/${RouterIntegration}"
+  CreateDeliveryRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: POST /deliveries
+      Target: !Sub "integrations/${RouterIntegration}"
+  GetDeliveryRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: GET /deliveries/{id}
+      Target: !Sub "integrations/${RouterIntegration}"
+  AnalyticsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: GET /analytics
+      Target: !Sub "integrations/${RouterIntegration}"
+  PredictionsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: POST /predictions
+      Target: !Sub "integrations/${RouterIntegration}"
+  AssistantRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: POST /assistant
+      Target: !Sub "integrations/${RouterIntegration}"
+
+  HttpApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: !Ref EnvironmentName
+      AutoDeploy: true
 
 Outputs:
+  ApiUrl:
+    Description: Base URL of the HTTP API.
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/${EnvironmentName}"
   DeliveriesTableName:
+    Description: DynamoDB table name.
     Value: !Ref DeliveriesTable
   HistoricalDataBucketName:
+    Description: S3 bucket for historical datasets.
     Value: !Ref HistoricalDataBucket
   FrontendBucketName:
+    Description: S3 bucket for frontend assets.
     Value: !Ref FrontendBucket
+  CloudFrontDomain:
+    Description: CloudFront distribution domain.
+    Value: !GetAtt CloudFrontDistribution.DomainName
