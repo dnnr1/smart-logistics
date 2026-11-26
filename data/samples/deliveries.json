@@ -1,0 +1,476 @@
+[
+  {
+    "id": "del-0001",
+    "trackingCode": "SLX12345678",
+    "status": "delivered",
+    "origin": "Rotterdam",
+    "destination": "Berlin",
+    "carrier": "Northwind Freight",
+    "region": "EU-Central",
+    "distanceKm": 720,
+    "estimatedDeliveryAt": "2026-11-04T16:00:00.000Z",
+    "actualDeliveryAt": "2026-11-04T14:20:00.000Z",
+    "createdAt": "2026-11-01T08:00:00.000Z",
+    "updatedAt": "2026-11-04T14:20:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0001-evt-0",
+        "deliveryId": "del-0001",
+        "status": "pending",
+        "occurredAt": "2026-11-01T08:00:00.000Z",
+        "location": "Rotterdam",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0001-evt-1",
+        "deliveryId": "del-0001",
+        "status": "delivered",
+        "occurredAt": "2026-11-04T14:20:00.000Z",
+        "location": "Berlin"
+      }
+    ]
+  },
+  {
+    "id": "del-0002",
+    "trackingCode": "SLX87654321",
+    "status": "in_transit",
+    "origin": "Lyon",
+    "destination": "Milan",
+    "carrier": "Alpine Logistics",
+    "region": "EU-South",
+    "distanceKm": 480,
+    "estimatedDeliveryAt": "2026-11-28T18:00:00.000Z",
+    "createdAt": "2026-11-24T09:30:00.000Z",
+    "updatedAt": "2026-11-25T10:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0002-evt-0",
+        "deliveryId": "del-0002",
+        "status": "pending",
+        "occurredAt": "2026-11-24T09:30:00.000Z",
+        "location": "Lyon",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0002-evt-1",
+        "deliveryId": "del-0002",
+        "status": "in_transit",
+        "occurredAt": "2026-11-25T10:00:00.000Z",
+        "location": "Grenoble"
+      }
+    ]
+  },
+  {
+    "id": "del-0003",
+    "trackingCode": "SLX55566677",
+    "status": "delayed",
+    "origin": "Madrid",
+    "destination": "Lisbon",
+    "carrier": "Iberia Express",
+    "region": "EU-West",
+    "distanceKm": 640,
+    "estimatedDeliveryAt": "2026-11-25T12:00:00.000Z",
+    "createdAt": "2026-11-20T07:15:00.000Z",
+    "updatedAt": "2026-11-25T12:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0003-evt-0",
+        "deliveryId": "del-0003",
+        "status": "pending",
+        "occurredAt": "2026-11-20T07:15:00.000Z",
+        "location": "Madrid",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0003-evt-1",
+        "deliveryId": "del-0003",
+        "status": "delayed",
+        "occurredAt": "2026-11-25T12:00:00.000Z",
+        "location": "Badajoz",
+        "note": "Customs hold"
+      }
+    ]
+  },
+  {
+    "id": "del-0004",
+    "trackingCode": "SLX24681357",
+    "status": "out_for_delivery",
+    "origin": "Warsaw",
+    "destination": "Prague",
+    "carrier": "Northwind Freight",
+    "region": "EU-Central",
+    "distanceKm": 520,
+    "estimatedDeliveryAt": "2026-11-26T15:00:00.000Z",
+    "createdAt": "2026-11-23T06:00:00.000Z",
+    "updatedAt": "2026-11-26T08:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0004-evt-0",
+        "deliveryId": "del-0004",
+        "status": "pending",
+        "occurredAt": "2026-11-23T06:00:00.000Z",
+        "location": "Warsaw",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0004-evt-1",
+        "deliveryId": "del-0004",
+        "status": "out_for_delivery",
+        "occurredAt": "2026-11-26T08:00:00.000Z",
+        "location": "Prague"
+      }
+    ]
+  },
+  {
+    "id": "del-0005",
+    "trackingCode": "SLX97531864",
+    "status": "delivered",
+    "origin": "Paris",
+    "destination": "Amsterdam",
+    "carrier": "Alpine Logistics",
+    "region": "EU-West",
+    "distanceKm": 510,
+    "estimatedDeliveryAt": "2026-11-10T17:00:00.000Z",
+    "actualDeliveryAt": "2026-11-10T16:45:00.000Z",
+    "createdAt": "2026-11-07T11:00:00.000Z",
+    "updatedAt": "2026-11-10T16:45:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0005-evt-0",
+        "deliveryId": "del-0005",
+        "status": "pending",
+        "occurredAt": "2026-11-07T11:00:00.000Z",
+        "location": "Paris",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0005-evt-1",
+        "deliveryId": "del-0005",
+        "status": "delivered",
+        "occurredAt": "2026-11-10T16:45:00.000Z",
+        "location": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "id": "del-0006",
+    "trackingCode": "SLX11223344",
+    "status": "pending",
+    "origin": "Vienna",
+    "destination": "Budapest",
+    "carrier": "Danube Cargo",
+    "region": "EU-Central",
+    "distanceKm": 350,
+    "estimatedDeliveryAt": "2026-11-30T13:00:00.000Z",
+    "createdAt": "2026-11-26T07:45:00.000Z",
+    "updatedAt": "2026-11-26T07:45:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0006-evt-0",
+        "deliveryId": "del-0006",
+        "status": "pending",
+        "occurredAt": "2026-11-26T07:45:00.000Z",
+        "location": "Vienna",
+        "note": "Delivery created"
+      }
+    ]
+  },
+  {
+    "id": "del-0007",
+    "trackingCode": "SLX33445566",
+    "status": "in_transit",
+    "origin": "Barcelona",
+    "destination": "Rome",
+    "carrier": "Iberia Express",
+    "region": "EU-South",
+    "distanceKm": 1380,
+    "estimatedDeliveryAt": "2026-11-29T20:00:00.000Z",
+    "createdAt": "2026-11-22T05:00:00.000Z",
+    "updatedAt": "2026-11-25T19:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0007-evt-0",
+        "deliveryId": "del-0007",
+        "status": "pending",
+        "occurredAt": "2026-11-22T05:00:00.000Z",
+        "location": "Barcelona",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0007-evt-1",
+        "deliveryId": "del-0007",
+        "status": "in_transit",
+        "occurredAt": "2026-11-25T19:00:00.000Z",
+        "location": "Marseille"
+      }
+    ]
+  },
+  {
+    "id": "del-0008",
+    "trackingCode": "SLX44556677",
+    "status": "delayed",
+    "origin": "Hamburg",
+    "destination": "Copenhagen",
+    "carrier": "Nordic Line",
+    "region": "EU-North",
+    "distanceKm": 460,
+    "estimatedDeliveryAt": "2026-11-24T10:00:00.000Z",
+    "createdAt": "2026-11-18T08:00:00.000Z",
+    "updatedAt": "2026-11-24T10:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0008-evt-0",
+        "deliveryId": "del-0008",
+        "status": "pending",
+        "occurredAt": "2026-11-18T08:00:00.000Z",
+        "location": "Hamburg",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0008-evt-1",
+        "deliveryId": "del-0008",
+        "status": "delayed",
+        "occurredAt": "2026-11-24T10:00:00.000Z",
+        "location": "Flensburg",
+        "note": "Weather disruption"
+      }
+    ]
+  },
+  {
+    "id": "del-0009",
+    "trackingCode": "SLX66778899",
+    "status": "delivered",
+    "origin": "Stockholm",
+    "destination": "Oslo",
+    "carrier": "Nordic Line",
+    "region": "EU-North",
+    "distanceKm": 570,
+    "estimatedDeliveryAt": "2026-11-12T15:00:00.000Z",
+    "actualDeliveryAt": "2026-11-12T15:10:00.000Z",
+    "createdAt": "2026-11-08T09:00:00.000Z",
+    "updatedAt": "2026-11-12T15:10:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0009-evt-0",
+        "deliveryId": "del-0009",
+        "status": "pending",
+        "occurredAt": "2026-11-08T09:00:00.000Z",
+        "location": "Stockholm",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0009-evt-1",
+        "deliveryId": "del-0009",
+        "status": "delivered",
+        "occurredAt": "2026-11-12T15:10:00.000Z",
+        "location": "Oslo"
+      }
+    ]
+  },
+  {
+    "id": "del-0010",
+    "trackingCode": "SLX78990011",
+    "status": "cancelled",
+    "origin": "Dublin",
+    "destination": "Manchester",
+    "carrier": "Celtic Freight",
+    "region": "EU-West",
+    "distanceKm": 290,
+    "estimatedDeliveryAt": "2026-11-21T14:00:00.000Z",
+    "createdAt": "2026-11-15T10:00:00.000Z",
+    "updatedAt": "2026-11-16T09:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0010-evt-0",
+        "deliveryId": "del-0010",
+        "status": "pending",
+        "occurredAt": "2026-11-15T10:00:00.000Z",
+        "location": "Dublin",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0010-evt-1",
+        "deliveryId": "del-0010",
+        "status": "cancelled",
+        "occurredAt": "2026-11-16T09:00:00.000Z",
+        "location": "Dublin",
+        "note": "Customer cancelled"
+      }
+    ]
+  },
+  {
+    "id": "del-0011",
+    "trackingCode": "SLX12344321",
+    "status": "in_transit",
+    "origin": "Munich",
+    "destination": "Zurich",
+    "carrier": "Alpine Logistics",
+    "region": "EU-Central",
+    "distanceKm": 320,
+    "estimatedDeliveryAt": "2026-11-27T12:00:00.000Z",
+    "createdAt": "2026-11-24T13:00:00.000Z",
+    "updatedAt": "2026-11-25T13:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0011-evt-0",
+        "deliveryId": "del-0011",
+        "status": "pending",
+        "occurredAt": "2026-11-24T13:00:00.000Z",
+        "location": "Munich",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0011-evt-1",
+        "deliveryId": "del-0011",
+        "status": "in_transit",
+        "occurredAt": "2026-11-25T13:00:00.000Z",
+        "location": "Bregenz"
+      }
+    ]
+  },
+  {
+    "id": "del-0012",
+    "trackingCode": "SLX56788990",
+    "status": "out_for_delivery",
+    "origin": "Brussels",
+    "destination": "Cologne",
+    "carrier": "Danube Cargo",
+    "region": "EU-West",
+    "distanceKm": 220,
+    "estimatedDeliveryAt": "2026-11-26T16:00:00.000Z",
+    "createdAt": "2026-11-24T08:00:00.000Z",
+    "updatedAt": "2026-11-26T07:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0012-evt-0",
+        "deliveryId": "del-0012",
+        "status": "pending",
+        "occurredAt": "2026-11-24T08:00:00.000Z",
+        "location": "Brussels",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0012-evt-1",
+        "deliveryId": "del-0012",
+        "status": "out_for_delivery",
+        "occurredAt": "2026-11-26T07:00:00.000Z",
+        "location": "Cologne"
+      }
+    ]
+  },
+  {
+    "id": "del-0013",
+    "trackingCode": "SLX90123456",
+    "status": "delivered",
+    "origin": "Lisbon",
+    "destination": "Porto",
+    "carrier": "Iberia Express",
+    "region": "EU-West",
+    "distanceKm": 310,
+    "estimatedDeliveryAt": "2026-11-09T18:00:00.000Z",
+    "actualDeliveryAt": "2026-11-09T17:30:00.000Z",
+    "createdAt": "2026-11-06T12:00:00.000Z",
+    "updatedAt": "2026-11-09T17:30:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0013-evt-0",
+        "deliveryId": "del-0013",
+        "status": "pending",
+        "occurredAt": "2026-11-06T12:00:00.000Z",
+        "location": "Lisbon",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0013-evt-1",
+        "deliveryId": "del-0013",
+        "status": "delivered",
+        "occurredAt": "2026-11-09T17:30:00.000Z",
+        "location": "Porto"
+      }
+    ]
+  },
+  {
+    "id": "del-0014",
+    "trackingCode": "SLX34567890",
+    "status": "delayed",
+    "origin": "Athens",
+    "destination": "Sofia",
+    "carrier": "Balkan Route",
+    "region": "EU-South",
+    "distanceKm": 1020,
+    "estimatedDeliveryAt": "2026-11-23T11:00:00.000Z",
+    "createdAt": "2026-11-17T06:00:00.000Z",
+    "updatedAt": "2026-11-23T11:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0014-evt-0",
+        "deliveryId": "del-0014",
+        "status": "pending",
+        "occurredAt": "2026-11-17T06:00:00.000Z",
+        "location": "Athens",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0014-evt-1",
+        "deliveryId": "del-0014",
+        "status": "delayed",
+        "occurredAt": "2026-11-23T11:00:00.000Z",
+        "location": "Thessaloniki",
+        "note": "Border delays"
+      }
+    ]
+  },
+  {
+    "id": "del-0015",
+    "trackingCode": "SLX65432109",
+    "status": "pending",
+    "origin": "Prague",
+    "destination": "Krakow",
+    "carrier": "Danube Cargo",
+    "region": "EU-Central",
+    "distanceKm": 390,
+    "estimatedDeliveryAt": "2026-12-01T14:00:00.000Z",
+    "createdAt": "2026-11-26T09:00:00.000Z",
+    "updatedAt": "2026-11-26T09:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0015-evt-0",
+        "deliveryId": "del-0015",
+        "status": "pending",
+        "occurredAt": "2026-11-26T09:00:00.000Z",
+        "location": "Prague",
+        "note": "Delivery created"
+      }
+    ]
+  },
+  {
+    "id": "del-0016",
+    "trackingCode": "SLX10293847",
+    "status": "in_transit",
+    "origin": "Copenhagen",
+    "destination": "Helsinki",
+    "carrier": "Nordic Line",
+    "region": "EU-North",
+    "distanceKm": 1240,
+    "estimatedDeliveryAt": "2026-11-30T19:00:00.000Z",
+    "createdAt": "2026-11-23T10:00:00.000Z",
+    "updatedAt": "2026-11-25T20:00:00.000Z",
+    "events": [
+      {
+        "eventId": "del-0016-evt-0",
+        "deliveryId": "del-0016",
+        "status": "pending",
+        "occurredAt": "2026-11-23T10:00:00.000Z",
+        "location": "Copenhagen",
+        "note": "Delivery created"
+      },
+      {
+        "eventId": "del-0016-evt-1",
+        "deliveryId": "del-0016",
+        "status": "in_transit",
+        "occurredAt": "2026-11-25T20:00:00.000Z",
+        "location": "Stockholm"
+      }
+    ]
+  }
+]

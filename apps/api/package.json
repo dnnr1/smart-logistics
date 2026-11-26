@@ -6,7 +6,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "build": "esbuild src/handlers/router.ts --bundle --platform=node --target=node20 --format=cjs --external:@aws-sdk/* --outfile=dist/index.cjs",
+    "dev": "esbuild src/local-server.ts --bundle --platform=node --target=node20 --format=cjs --external:@aws-sdk/* --outfile=dist/local.cjs && node dist/local.cjs",
+    "build": "esbuild src/interfaces/router.ts --bundle --platform=node --target=node20 --format=cjs --external:@aws-sdk/* --outfile=dist/index.cjs",
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {

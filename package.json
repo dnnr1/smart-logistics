@@ -15,6 +15,8 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "build": "pnpm -r --if-present build",
+    "dev:web": "pnpm --filter @smart-logistics/web dev",
+    "dev:api": "pnpm --filter @smart-logistics/api dev",
     "clean": "pnpm -r --if-present clean"
   },
   "devDependencies": {
