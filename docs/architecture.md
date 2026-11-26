@@ -42,18 +42,18 @@ flowchart LR
 
 ### Components
 
-| Component | Technology | Responsibility |
-| --- | --- | --- |
-| Web SPA | React, Vite, TypeScript, Tailwind, TanStack Query, Recharts | Dashboard, deliveries, analytics, risk, assistant UI |
-| CDN | CloudFront + Origin Access Control | Serve the SPA from a private S3 bucket over HTTPS |
-| API | API Gateway HTTP API | Routing, throttling, CORS |
-| Compute | AWS Lambda (Node.js 20/22, TypeScript) | One handler module per resource group |
-| Persistence | Amazon DynamoDB | Deliveries + access-pattern GSIs |
-| AI | Amazon Bedrock | Generative assistant (backend only) |
-| Data lake | Amazon S3 (historical) | Future dataset storage for SageMaker |
-| ML (future) | Amazon SageMaker | Training + real-time inference endpoint |
-| IaC | AWS CloudFormation (YAML, nested) | Reproducible infrastructure |
-| CI | GitHub Actions | Lint, typecheck, test, build, cfn-lint |
+| Component   | Technology                                                  | Responsibility                                       |
+| ----------- | ----------------------------------------------------------- | ---------------------------------------------------- |
+| Web SPA     | React, Vite, TypeScript, Tailwind, TanStack Query, Recharts | Dashboard, deliveries, analytics, risk, assistant UI |
+| CDN         | CloudFront + Origin Access Control                          | Serve the SPA from a private S3 bucket over HTTPS    |
+| API         | API Gateway HTTP API                                        | Routing, throttling, CORS                            |
+| Compute     | AWS Lambda (Node.js 20/22, TypeScript)                      | One handler module per resource group                |
+| Persistence | Amazon DynamoDB                                             | Deliveries + access-pattern GSIs                     |
+| AI          | Amazon Bedrock                                              | Generative assistant (backend only)                  |
+| Data lake   | Amazon S3 (historical)                                      | Future dataset storage for SageMaker                 |
+| ML (future) | Amazon SageMaker                                            | Training + real-time inference endpoint              |
+| IaC         | AWS CloudFormation (YAML, nested)                           | Reproducible infrastructure                          |
+| CI          | GitHub Actions                                              | Lint, typecheck, test, build, cfn-lint               |
 
 ## 3. Repository structure
 
@@ -146,14 +146,14 @@ Base path: `/` (API Gateway HTTP API). JSON in/out. Consistent envelope:
 { "error": { "code": "NOT_FOUND", "message": "...", "requestId": "..." } }
 ```
 
-| Method | Path | Body / Query | Success | Errors |
-| --- | --- | --- | --- | --- |
-| GET | `/deliveries` | `?status&carrier&q&page&pageSize` | 200 list envelope | 400 validation |
-| GET | `/deliveries/{id}` | path `id` | 200 delivery | 400, 404 |
-| POST | `/deliveries` | DeliveryInput | 201 delivery | 400 |
-| GET | `/analytics` | — | 200 analytics | 500 |
-| POST | `/predictions` | `{ deliveryId }` or `DeliveryFeatures` | 200 risk result | 400, 404 |
-| POST | `/assistant` | `{ question }` | 200 answer + sources | 400, 503 (AI unavailable) |
+| Method | Path               | Body / Query                           | Success              | Errors                    |
+| ------ | ------------------ | -------------------------------------- | -------------------- | ------------------------- |
+| GET    | `/deliveries`      | `?status&carrier&q&page&pageSize`      | 200 list envelope    | 400 validation            |
+| GET    | `/deliveries/{id}` | path `id`                              | 200 delivery         | 400, 404                  |
+| POST   | `/deliveries`      | DeliveryInput                          | 201 delivery         | 400                       |
+| GET    | `/analytics`       | —                                      | 200 analytics        | 500                       |
+| POST   | `/predictions`     | `{ deliveryId }` or `DeliveryFeatures` | 200 risk result      | 400, 404                  |
+| POST   | `/assistant`       | `{ question }`                         | 200 answer + sources | 400, 503 (AI unavailable) |
 
 Validation uses **Zod** schemas in `packages/shared`. Errors are mapped centrally; internal
 errors are logged with a request id and returned as a generic `INTERNAL` message.
@@ -172,13 +172,13 @@ GSIs:
 - `GSI2`: `PK2 = CARRIER#<carrier>`, `SK2 = <createdAt>` → carrier performance analytics.
 - `GSI3`: `PK3 = REGION#<region>`, `SK3 = <createdAt>` → regional delay analytics.
 
-| Access pattern | Index | Query |
-| --- | --- | --- |
-| Get delivery + history | Table | `PK = DELIVERY#<id>` |
-| List by status (paged) | GSI1 | `PK1 = STATUS#<status>` |
-| Search by tracking code | GSI4 (`trackingCode`) or scan with filter | `trackingCode = :code` |
-| Carrier performance | GSI2 | `PK2 = CARRIER#<carrier>` |
-| Regional delays | GSI3 | `PK3 = REGION#<region>` |
+| Access pattern          | Index                                     | Query                     |
+| ----------------------- | ----------------------------------------- | ------------------------- |
+| Get delivery + history  | Table                                     | `PK = DELIVERY#<id>`      |
+| List by status (paged)  | GSI1                                      | `PK1 = STATUS#<status>`   |
+| Search by tracking code | GSI4 (`trackingCode`) or scan with filter | `trackingCode = :code`    |
+| Carrier performance     | GSI2                                      | `PK2 = CARRIER#<carrier>` |
+| Regional delays         | GSI3                                      | `PK3 = REGION#<region>`   |
 
 Design decisions are recorded in `docs/decisions/0002-dynamodb-single-table.md`.
 

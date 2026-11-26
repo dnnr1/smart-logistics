@@ -18,38 +18,42 @@ paths:
     get:
       summary: List deliveries
       parameters:
-        - { name: status, in: query, schema: { $ref: '#/components/schemas/DeliveryStatus' } }
+        - { name: status, in: query, schema: { $ref: "#/components/schemas/DeliveryStatus" } }
         - { name: carrier, in: query, schema: { type: string } }
         - { name: q, in: query, schema: { type: string }, description: tracking code search }
         - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
-        - { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - {
+            name: pageSize,
+            in: query,
+            schema: { type: integer, minimum: 1, maximum: 100, default: 20 },
+          }
       responses:
-        '200': { description: List envelope }
-        '400': { description: Validation error }
+        "200": { description: List envelope }
+        "400": { description: Validation error }
     post:
       summary: Create delivery
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/DeliveryInput' }
+            schema: { $ref: "#/components/schemas/DeliveryInput" }
       responses:
-        '201': { description: Created }
-        '400': { description: Validation error }
+        "201": { description: Created }
+        "400": { description: Validation error }
   /deliveries/{id}:
     get:
       summary: Get delivery with history
       parameters:
         - { name: id, in: path, required: true, schema: { type: string } }
       responses:
-        '200': { description: Delivery }
-        '400': { description: Validation error }
-        '404': { description: Not found }
+        "200": { description: Delivery }
+        "400": { description: Validation error }
+        "404": { description: Not found }
   /analytics:
     get:
       summary: Operational analytics
       responses:
-        '200': { description: Analytics }
+        "200": { description: Analytics }
   /predictions:
     post:
       summary: Delivery risk score (heuristic baseline, SageMaker-ready)
@@ -59,12 +63,16 @@ paths:
           application/json:
             schema:
               oneOf:
-                - { type: object, required: [deliveryId], properties: { deliveryId: { type: string } } }
-                - { $ref: '#/components/schemas/RiskInput' }
+                - {
+                    type: object,
+                    required: [deliveryId],
+                    properties: { deliveryId: { type: string } },
+                  }
+                - { $ref: "#/components/schemas/RiskInput" }
       responses:
-        '200': { description: Risk result }
-        '400': { description: Validation error }
-        '404': { description: Delivery not found }
+        "200": { description: Risk result }
+        "400": { description: Validation error }
+        "404": { description: Delivery not found }
   /assistant:
     post:
       summary: Ask the grounded AI assistant
@@ -72,11 +80,16 @@ paths:
         required: true
         content:
           application/json:
-            schema: { type: object, required: [question], properties: { question: { type: string, maxLength: 500 } } }
+            schema:
+              {
+                type: object,
+                required: [question],
+                properties: { question: { type: string, maxLength: 500 } },
+              }
       responses:
-        '200': { description: Answer with sources }
-        '400': { description: Validation error }
-        '503': { description: AI unavailable }
+        "200": { description: Answer with sources }
+        "400": { description: Validation error }
+        "503": { description: AI unavailable }
 components:
   schemas:
     DeliveryStatus:
@@ -87,9 +100,10 @@ components:
       enum: [low, medium, high]
     DeliveryInput:
       type: object
-      required: [trackingCode, origin, destination, carrier, region, distanceKm, estimatedDeliveryAt]
+      required:
+        [trackingCode, origin, destination, carrier, region, distanceKm, estimatedDeliveryAt]
       properties:
-        trackingCode: { type: string, pattern: '^[A-Z0-9]{8,16}$' }
+        trackingCode: { type: string, pattern: "^[A-Z0-9]{8,16}$" }
         origin: { type: string }
         destination: { type: string }
         carrier: { type: string }
@@ -104,5 +118,5 @@ components:
         estimatedTransitHours: { type: number, minimum: 0 }
         carrier: { type: string }
         region: { type: string }
-        status: { $ref: '#/components/schemas/DeliveryStatus' }
+        status: { $ref: "#/components/schemas/DeliveryStatus" }
         historicalDelayRate: { type: number, minimum: 0, maximum: 1 }
