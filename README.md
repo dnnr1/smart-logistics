@@ -1,5 +1,8 @@
 # Smart Logistics
 
+[![CI](https://github.com/dnnr1/smart-logistics/actions/workflows/ci.yaml/badge.svg)](https://github.com/dnnr1/smart-logistics/actions/workflows/ci.yaml)
+[![Infrastructure Validation](https://github.com/dnnr1/smart-logistics/actions/workflows/infrastructure.yaml/badge.svg)](https://github.com/dnnr1/smart-logistics/actions/workflows/infrastructure.yaml)
+
 > AI-powered logistics intelligence platform built with TypeScript and AWS serverless services.
 
 Smart Logistics helps logistics managers monitor deliveries, analyze operational performance,
