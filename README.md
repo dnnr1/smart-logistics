@@ -195,4 +195,4 @@ default to avoid substantial charges. See [docs/infrastructure.md](docs/infrastr
 
 ## License
 
-[MIT](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md).
+[MIT](LICENSE).
